@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wizard King - The Supreme Mage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        'wizard-purple': '#6B46C1',
+                        'wizard-gold': '#FFD700',
+                        'wizard-dark': '#2D1B69',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        .sparkle-animation {
+            animation: sparkle 2s ease-in-out infinite;
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        .wizard-gradient {
+            background: linear-gradient(135deg, #6B46C1 0%, #5D5CDE 50%, #9F7AEA 100%);
+        }
+        .wizard-gradient-dark {
+            background: linear-gradient(135deg, #2D1B69 0%, #4C1D95 50%, #5B21B6 100%);
+        }
+        .gold-text {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .magic-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .magic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(107, 70, 193, 0.4);
+            border-color: rgba(255, 215, 0, 0.6);
+        }
+        .star-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-900 via-indigo-900 to-purple-800 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900 min-h-screen text-white transition-colors duration-300">
+    <!-- Star Field Background -->
+    <div class="star-field" id="starField"></div>
+
+    <!-- Navigation -->
+    <nav class="relative z-10 bg-black bg-opacity-30 backdrop-blur-md border-b border-wizard-gold border-opacity-20 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="text-3xl sparkle-animation">👑</div>
+                    <span class="text-xl font-bold gold-text">Wizard King</span>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <button onclick="showPage('home')" class="nav-btn text-base hover:text-wizard-gold transition-colors">Home</button>
+                    <button onclick="showPage('about')" class="nav-btn text-base hover:text-wizard-gold transition-colors">About</button>
+                    <button onclick="showPage('spells')" class="nav-btn text-base hover:text-wizard-gold transition-colors">Spells</button>
+                    <button onclick="showPage('grimoire')" class="nav-btn text-base hover:text-wizard-gold transition-colors">Grimoire</button>
+                    <button onclick="showPage('knights')" class="nav-btn text-base hover:text-wizard-gold transition-colors">Magic Knights</button>
+                    <button onclick="showPage('gallery')" class="nav-btn text-base hover:text-wizard-gold transition-colors">Gallery</button>
+                </div>
+                <button onclick="toggleMobileMenu()" class="md:hidden text-wizard-gold">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-black bg-opacity-50 backdrop-blur-md">
+            <div class="px-4 py-3 space-y-2">
+                <button onclick="showPage('home'); toggleMobileMenu()" class="block w-full text-left py-2 hover:text-wizard-gold transition-colors text-base">Home</button>
+                <button onclick="showPage('about'); toggleMobileMenu()" class="block w-full text-left py-2 hover:text-wizard-gold transition-colors text-base">About</button>
+                <button onclick="showPage('spells'); toggleMobileMenu()" class="block w-full text-left py-2 hover:text-wizard-gold transition-colors text-base">Spells</button>
+                <button onclick="showPage('grimoire'); toggleMobileMenu()" class="block w-full text-left py-2 hover:text-wizard-gold transition-colors text-base">Grimoire</button>
+                <button onclick="showPage('knights'); toggleMobileMenu()" class="block w-full text-left py-2 hover:text-wizard-gold transition-colors text-base">Magic Knights</button>
+                <button onclick="showPage('gallery'); toggleMobileMenu()" class="block w-full text-left py-2 hover:text-wizard-gold transition-colors text-base">Gallery</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Home Page -->
+        <div id="homePage" class="page">
+            <div class="text-center mb-12 fade-in">
+                <div class="text-8xl mb-6 float-animation">👑</div>
+                <h1 class="text-5xl md:text-7xl font-bold mb-4 gold-text">The Wizard King</h1>
+                <p class="text-xl md:text-2xl text-purple-200 mb-8">Supreme Ruler of the Magic Knights</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="showPage('about')" class="px-8 py-3 bg-wizard-gold text-wizard-dark font-bold rounded-lg hover:bg-yellow-400 transition-all transform hover:scale-105 text-base">
+                        Learn More
+                    </button>
+                    <button onclick="showPage('spells')" class="px-8 py-3 border-2 border-wizard-gold text-wizard-gold font-bold rounded-lg hover:bg-wizard-gold hover:text-wizard-dark transition-all transform hover:scale-105 text-base">
+                        View Spells
+                    </button>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                <div class="magic-card rounded-xl p-6 text-center">
+                    <div class="text-5xl mb-4">⚔️</div>
+                    <h3 class="text-xl font-bold mb-2 text-wizard-gold">Supreme Power</h3>
+                    <p class="text-purple-200 text-base">The strongest mage in the Clover Kingdom</p>
+                </div>
+                <div class="magic-card rounded-xl p-6 text-center">
+                    <div class="text-5xl mb-4">📖</div>
+                    <h3 class="text-xl font-bold mb-2 text-wizard-gold">Ancient Grimoire</h3>
+                    <p class="text-purple-200 text-base">Wielder of legendary magical artifacts</p>
+                </div>
+                <div class="magic-card rounded-xl p-6 text-center">
+                    <div class="text-5xl mb-4">✨</div>
+                    <h3 class="text-xl font-bold mb-2 text-wizard-gold">Master of Magic</h3>
+                    <p class="text-purple-200 text-base">Commands all forms of magical power</p>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="mt-12 wizard-gradient rounded-2xl p-8">
+                <h2 class="text-3xl font-bold mb-6 text-center">Wizard King Stats</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-wizard-gold mb-2">∞</div>
+                        <div class="text-purple-200 text-base">Magic Power</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-wizard-gold mb-2">100</div>
+                        <div class="text-purple-200 text-base">Leadership</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-wizard-gold mb-2">99</div>
+                        <div class="text-purple-200 text-base">Wisdom</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-wizard-gold mb-2">1</div>
+                        <div class="text-purple-200 text-base">Rank</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="aboutPage" class="page hidden">
+            <div class="fade-in">
+                <h1 class="text-4xl md:text-5xl font-bold mb-8 gold-text">About the Wizard King</h1>
+
+                <div class="wizard-gradient rounded-2xl p-8 mb-8">
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="text-8xl float-animation">👑</div>
+                        <div class="flex-1">
+                            <h2 class="text-3xl font-bold mb-4">The Supreme Title</h2>
+                            <p class="text-lg text-purple-100 mb-4 leading-relaxed">
+                                The Wizard King is the most powerful mage in the Clover Kingdom and serves as the leader of all Magic Knights.
+                                This prestigious position represents the pinnacle of magical achievement and is awarded to those who demonstrate
+                                exceptional power, wisdom, and dedication to protecting the kingdom.
+                            </p>
+                            <p class="text-lg text-purple-100 leading-relaxed">
+                                The Wizard King commands respect from all magic users and is responsible for maintaining peace,
+                                leading the Magic Knight squads, and defending the kingdom from external threats.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="magic-card rounded-xl p-6">
+                        <h3 class="text-2xl font-bold mb-4 text-wizard-gold flex items-center gap-2">
+                            <span>📜</span> Responsibilities
+                        </h3>
+                        <ul class="space-y-3 text-purple-100 text-base">
+                            <li class="flex items-start gap-2">
+                                <span class="text-wizard-gold mt-1">•</span>
+                                <span>Lead and oversee all Magic Knight squads</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-wizard-gold mt-1">•</span>
+                                <span>Protect the Clover Kingdom from threats</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-wizard-gold mt-1">•</span>
+                                <span>Maintain balance and peace in the kingdom</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-wizard-gold mt-1">•</span>
+                                <span>Make critical decisions during times of crisis</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6">
+                        <h3 class="text-2xl font-bold mb-4 text-wizard-gold flex items-center gap-2">
+                            <span>⚡</span> Requirements
+                        </h3>
+                        <ul class="space-y-3 text-purple-100 text-base">
+                            <li class="flex items-start gap-2">
+                                <span class="text-wizard-gold mt-1">•</span>
+                                <span>Exceptional magical power and control</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-wizard-gold mt-1">•</span>
+                                <span>Proven leadership and strategic abilities</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-wizard-gold mt-1">•</span>
+                                <span>Unwavering dedication to the kingdom</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-wizard-gold mt-1">•</span>
+                                <span>Recognition from the previous Wizard King</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spells Page -->
+        <div id="spellsPage" class="page hidden">
+            <div class="fade-in">
+                <h1 class="text-4xl md:text-5xl font-bold mb-8 gold-text">Legendary Spells</h1>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Spell Cards -->
+                    <div class="magic-card rounded-xl p-6 hover:shadow-2xl">
+                        <div class="text-5xl mb-4">🔥</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Fire Magic: Crimson Eruption</h3>
+                        <div class="mb-3">
+                            <span class="inline-block px-3 py-1 bg-red-600 rounded-full text-sm">Fire</span>
+                            <span class="inline-block px-3 py-1 bg-purple-600 rounded-full text-sm ml-2">Attack</span>
+                        </div>
+                        <p class="text-purple-200 text-base">Unleashes devastating flames that consume everything in their path.</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 hover:shadow-2xl">
+                        <div class="text-5xl mb-4">⚡</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Lightning Magic: Thunder God's Wrath</h3>
+                        <div class="mb-3">
+                            <span class="inline-block px-3 py-1 bg-yellow-600 rounded-full text-sm">Lightning</span>
+                            <span class="inline-block px-3 py-1 bg-purple-600 rounded-full text-sm ml-2">Attack</span>
+                        </div>
+                        <p class="text-purple-200 text-base">Summons divine lightning bolts that strike with incredible speed.</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 hover:shadow-2xl">
+                        <div class="text-5xl mb-4">🌊</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Water Magic: Ocean's Blessing</h3>
+                        <div class="mb-3">
+                            <span class="inline-block px-3 py-1 bg-blue-600 rounded-full text-sm">Water</span>
+                            <span class="inline-block px-3 py-1 bg-green-600 rounded-full text-sm ml-2">Healing</span>
+                        </div>
+                        <p class="text-purple-200 text-base">Heals wounds and restores vitality with pure water magic.</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 hover:shadow-2xl">
+                        <div class="text-5xl mb-4">🌪️</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Wind Magic: Tempest Spiral</h3>
+                        <div class="mb-3">
+                            <span class="inline-block px-3 py-1 bg-teal-600 rounded-full text-sm">Wind</span>
+                            <span class="inline-block px-3 py-1 bg-purple-600 rounded-full text-sm ml-2">Attack</span>
+                        </div>
+                        <p class="text-purple-200 text-base">Creates a devastating tornado that tears through enemy defenses.</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 hover:shadow-2xl">
+                        <div class="text-5xl mb-4">🌑</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Dark Magic: Shadow Abyss</h3>
+                        <div class="mb-3">
+                            <span class="inline-block px-3 py-1 bg-gray-800 rounded-full text-sm">Dark</span>
+                            <span class="inline-block px-3 py-1 bg-purple-600 rounded-full text-sm ml-2">Attack</span>
+                        </div>
+                        <p class="text-purple-200 text-base">Engulfs enemies in absolute darkness, draining their magic.</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 hover:shadow-2xl">
+                        <div class="text-5xl mb-4">✨</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Light Magic: Divine Ray</h3>
+                        <div class="mb-3">
+                            <span class="inline-block px-3 py-1 bg-yellow-400 rounded-full text-sm">Light</span>
+                            <span class="inline-block px-3 py-1 bg-purple-600 rounded-full text-sm ml-2">Attack</span>
+                        </div>
+                        <p class="text-purple-200 text-base">Pierces through darkness with a beam of purifying light.</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 hover:shadow-2xl">
+                        <div class="text-5xl mb-4">🌿</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Plant Magic: Verdant Garden</h3>
+                        <div class="mb-3">
+                            <span class="inline-block px-3 py-1 bg-green-600 rounded-full text-sm">Plant</span>
+                            <span class="inline-block px-3 py-1 bg-orange-600 rounded-full text-sm ml-2">Support</span>
+                        </div>
+                        <p class="text-purple-200 text-base">Summons magical plants that can trap and restrain enemies.</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 hover:shadow-2xl">
+                        <div class="text-5xl mb-4">🪨</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Earth Magic: Titan's Shield</h3>
+                        <div class="mb-3">
+                            <span class="inline-block px-3 py-1 bg-amber-700 rounded-full text-sm">Earth</span>
+                            <span class="inline-block px-3 py-1 bg-orange-600 rounded-full text-sm ml-2">Defense</span>
+                        </div>
+                        <p class="text-purple-200 text-base">Creates an impenetrable barrier of solid rock and earth.</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 hover:shadow-2xl">
+                        <div class="text-5xl mb-4">🌟</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Creation Magic: Grand Formation</h3>
+                        <div class="mb-3">
+                            <span class="inline-block px-3 py-1 bg-purple-600 rounded-full text-sm">Creation</span>
+                            <span class="inline-block px-3 py-1 bg-orange-600 rounded-full text-sm ml-2">Support</span>
+                        </div>
+                        <p class="text-purple-200 text-base">Manifests objects and constructs from pure magical energy.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grimoire Page -->
+        <div id="grimoirePage" class="page hidden">
+            <div class="fade-in">
+                <h1 class="text-4xl md:text-5xl font-bold mb-8 gold-text">Sacred Grimoires</h1>
+
+                <div class="wizard-gradient rounded-2xl p-8 mb-8 text-center">
+                    <div class="text-8xl mb-4 float-animation">📖</div>
+                    <h2 class="text-3xl font-bold mb-4">The Grimoire System</h2>
+                    <p class="text-lg text-purple-100 max-w-3xl mx-auto">
+                        Grimoires are magical books that choose their wielders at the age of 15. Each grimoire contains spells
+                        and grows stronger with its user. The number of clovers on a grimoire indicates its rarity and potential power.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-6xl mb-4">🍀</div>
+                        <h3 class="text-2xl font-bold mb-3 text-wizard-gold">One-Leaf Clover</h3>
+                        <p class="text-purple-200 mb-3 text-base">Represents faith and hope. The most common type of grimoire.</p>
+                        <div class="bg-purple-900 bg-opacity-50 rounded-lg p-3">
+                            <div class="text-sm text-purple-200">Rarity: Common</div>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-6xl mb-4">🍀🍀</div>
+                        <h3 class="text-2xl font-bold mb-3 text-wizard-gold">Two-Leaf Clover</h3>
+                        <p class="text-purple-200 mb-3 text-base">Represents faith and hope with good fortune.</p>
+                        <div class="bg-purple-900 bg-opacity-50 rounded-lg p-3">
+                            <div class="text-sm text-purple-200">Rarity: Uncommon</div>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-6xl mb-4">🍀🍀🍀</div>
+                        <h3 class="text-2xl font-bold mb-3 text-wizard-gold">Three-Leaf Clover</h3>
+                        <p class="text-purple-200 mb-3 text-base">Represents faith, hope, and love. Contains powerful magic.</p>
+                        <div class="bg-purple-900 bg-opacity-50 rounded-lg p-3">
+                            <div class="text-sm text-purple-200">Rarity: Rare</div>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 border-4 border-wizard-gold">
+                        <div class="text-6xl mb-4">🍀🍀🍀🍀</div>
+                        <h3 class="text-2xl font-bold mb-3 text-wizard-gold">Four-Leaf Clover</h3>
+                        <p class="text-purple-200 mb-3 text-base">Represents faith, hope, love, and good luck. Extremely rare and powerful.</p>
+                        <div class="bg-wizard-gold bg-opacity-20 rounded-lg p-3">
+                            <div class="text-sm text-wizard-gold font-bold">Rarity: Legendary</div>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 border-4 border-red-500">
+                        <div class="text-6xl mb-4">🍀🍀🍀🍀🍀</div>
+                        <h3 class="text-2xl font-bold mb-3 text-red-400">Five-Leaf Clover</h3>
+                        <p class="text-purple-200 mb-3 text-base">Contains a demon. Born from a four-leaf clover twisted by despair.</p>
+                        <div class="bg-red-900 bg-opacity-50 rounded-lg p-3">
+                            <div class="text-sm text-red-400 font-bold">Rarity: Cursed/Mythical</div>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 border-4 border-white">
+                        <div class="text-6xl mb-4">📕</div>
+                        <h3 class="text-2xl font-bold mb-3 text-white">Special Grimoires</h3>
+                        <p class="text-purple-200 mb-3 text-base">Unique grimoires with special properties and unlimited potential.</p>
+                        <div class="bg-white bg-opacity-20 rounded-lg p-3">
+                            <div class="text-sm text-white font-bold">Rarity: Unique</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Magic Knights Page -->
+        <div id="knightsPage" class="page hidden">
+            <div class="fade-in">
+                <h1 class="text-4xl md:text-5xl font-bold mb-8 gold-text">Magic Knight Squads</h1>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-5xl mb-4">🦅</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Golden Dawn</h3>
+                        <p class="text-purple-200 mb-3 text-base">The most prestigious squad with the strongest mages.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 bg-yellow-600 rounded text-sm">Elite</span>
+                            <span class="px-2 py-1 bg-purple-600 rounded text-sm">High Rank</span>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-5xl mb-4">🦁</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Crimson Lion Kings</h3>
+                        <p class="text-purple-200 mb-3 text-base">Known for their fierce warrior spirit and fire magic.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 bg-red-600 rounded text-sm">Offensive</span>
+                            <span class="px-2 py-1 bg-orange-600 rounded text-sm">Noble</span>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-5xl mb-4">🦌</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Blue Rose</h3>
+                        <p class="text-purple-200 mb-3 text-base">An all-female squad known for their elegance and power.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 bg-blue-600 rounded text-sm">Ice Magic</span>
+                            <span class="px-2 py-1 bg-pink-600 rounded text-sm">Female Only</span>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-5xl mb-4">🐂</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Black Bulls</h3>
+                        <p class="text-purple-200 mb-3 text-base">A rowdy squad of misfits with incredible potential.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 bg-gray-800 rounded text-sm">Chaotic</span>
+                            <span class="px-2 py-1 bg-green-600 rounded text-sm">Unique</span>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-5xl mb-4">🦏</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Silver Eagles</h3>
+                        <p class="text-purple-200 mb-3 text-base">A squad of noble mages with exceptional skills.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 bg-gray-400 rounded text-sm">Noble</span>
+                            <span class="px-2 py-1 bg-indigo-600 rounded text-sm">Skilled</span>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-5xl mb-4">🦚</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Purple Orcas</h3>
+                        <p class="text-purple-200 mb-3 text-base">Masters of illusion and deception magic.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 bg-purple-700 rounded text-sm">Illusion</span>
+                            <span class="px-2 py-1 bg-violet-600 rounded text-sm">Tactical</span>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-5xl mb-4">🦂</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Green Mantis</h3>
+                        <p class="text-purple-200 mb-3 text-base">Swift and agile fighters with plant magic expertise.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 bg-green-700 rounded text-sm">Plant Magic</span>
+                            <span class="px-2 py-1 bg-lime-600 rounded text-sm">Agile</span>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-5xl mb-4">🐬</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Aqua Deer</h3>
+                        <p class="text-purple-200 mb-3 text-base">Specialists in water and ice-based magic.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 bg-cyan-600 rounded text-sm">Water</span>
+                            <span class="px-2 py-1 bg-blue-500 rounded text-sm">Defensive</span>
+                        </div>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6">
+                        <div class="text-5xl mb-4">🦎</div>
+                        <h3 class="text-xl font-bold mb-2 text-wizard-gold">Coral Peacock</h3>
+                        <p class="text-purple-200 mb-3 text-base">Known for their diverse magical abilities.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 bg-teal-600 rounded text-sm">Versatile</span>
+                            <span class="px-2 py-1 bg-emerald-600 rounded text-sm">Balanced</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gallery Page -->
+        <div id="galleryPage" class="page hidden">
+            <div class="fade-in">
+                <h1 class="text-4xl md:text-5xl font-bold mb-8 gold-text">Wizard King Gallery</h1>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Magical Emblems -->
+                    <div class="magic-card rounded-xl p-6 text-center">
+                        <div class="w-full h-48 mb-4 rounded-lg wizard-gradient flex items-center justify-center">
+                            <div class="text-8xl sparkle-animation">👑</div>
+                        </div>
+                        <h3 class="text-xl font-bold text-wizard-gold">Crown of Authority</h3>
+                        <p class="text-purple-200 text-base mt-2">Symbol of the Wizard King's supreme power</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 text-center">
+                        <div class="w-full h-48 mb-4 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                            <div class="text-8xl">📖</div>
+                        </div>
+                        <h3 class="text-xl font-bold text-wizard-gold">Legendary Grimoire</h3>
+                        <p class="text-purple-200 text-base mt-2">Ancient tome of infinite magical knowledge</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 text-center">
+                        <div class="w-full h-48 mb-4 rounded-lg bg-gradient-to-br from-red-500 to-purple-600 flex items-center justify-center">
+                            <div class="text-8xl">⚔️</div>
+                        </div>
+                        <h3 class="text-xl font-bold text-wizard-gold">Sword of Light</h3>
+                        <p class="text-purple-200 text-base mt-2">Weapon forged from pure magical energy</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 text-center">
+                        <div class="w-full h-48 mb-4 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
+                            <div class="text-8xl">✨</div>
+                        </div>
+                        <h3 class="text-xl font-bold text-wizard-gold">Mana Crystal</h3>
+                        <p class="text-purple-200 text-base mt-2">Source of limitless magical power</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 text-center">
+                        <div class="w-full h-48 mb-4 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                            <div class="text-8xl">🌿</div>
+                        </div>
+                        <h3 class="text-xl font-bold text-wizard-gold">Nature's Blessing</h3>
+                        <p class="text-purple-200 text-base mt-2">Connection to the natural world</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 text-center">
+                        <div class="w-full h-48 mb-4 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center">
+                            <div class="text-8xl">🔮</div>
+                        </div>
+                        <h3 class="text-xl font-bold text-wizard-gold">Crystal Ball</h3>
+                        <p class="text-purple-200 text-base mt-2">Tool for divination and foresight</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 text-center">
+                        <div class="w-full h-48 mb-4 rounded-lg bg-gradient-to-br from-yellow-300 to-yellow-600 flex items-center justify-center">
+                            <div class="text-8xl">⚡</div>
+                        </div>
+                        <h3 class="text-xl font-bold text-wizard-gold">Lightning Strike</h3>
+                        <p class="text-purple-200 text-base mt-2">Raw elemental power unleashed</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 text-center">
+                        <div class="w-full h-48 mb-4 rounded-lg bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
+                            <div class="text-8xl">🌑</div>
+                        </div>
+                        <h3 class="text-xl font-bold text-wizard-gold">Dark Moon</h3>
+                        <p class="text-purple-200 text-base mt-2">Mystery of shadow magic</p>
+                    </div>
+
+                    <div class="magic-card rounded-xl p-6 text-center">
+                        <div class="w-full h-48 mb-4 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
+                            <div class="text-8xl">🔥</div>
+                        </div>
+                        <h3 class="text-xl font-bold text-wizard-gold">Eternal Flame</h3>
+                        <p class="text-purple-200 text-base mt-2">Fire that never extinguishes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 bg-black bg-opacity-30 backdrop-blur-md border-t border-wizard-gold border-opacity-20 mt-16 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="text-4xl mb-4 sparkle-animation">👑</div>
+            <p class="text-purple-200 text-base mb-2">Wizard King - Supreme Ruler of Magic</p>
+            <p class="text-purple-300 text-sm">May magic guide your path</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dark mode detection
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Create star field
+        function createStars() {
+            const starField = document.getElementById('starField');
+            const numStars = 100;
+
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                star.style.opacity = Math.random() * 0.5 + 0.2;
+                starField.appendChild(star);
+            }
+        }
+        createStars();
+
+        // Page navigation
+        function showPage(pageName) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.add('hidden');
+            });
+
+            // Show selected page
+            const selectedPage = document.getElementById(pageName + 'Page');
+            if (selectedPage) {
+                selectedPage.classList.remove('hidden');
+                // Trigger fade-in animation
+                const fadeElements = selectedPage.querySelectorAll('.fade-in');
+                fadeElements.forEach(el => {
+                    el.style.animation = 'none';
+                    setTimeout(() => {
+                        el.style.animation = 'fadeIn 0.6s ease-out forwards';
+                    }, 10);
+                });
+            }
+
+            // Update active nav button
+            const navBtns = document.querySelectorAll('.nav-btn');
+            navBtns.forEach(btn => {
+                btn.classList.remove('text-wizard-gold', 'font-bold');
+            });
+            event.target?.classList.add('text-wizard-gold', 'font-bold');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Initialize - show home page
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('home');
+        });
+
+        // Add sparkle effect to random elements
+        setInterval(() => {
+            const cards = document.querySelectorAll('.magic-card');
+            const randomCard = cards[Math.floor(Math.random() * cards.length)];
+            if (randomCard) {
+                randomCard.style.boxShadow = '0 10px 40px rgba(255, 215, 0, 0.5)';
+                setTimeout(() => {
+                    randomCard.style.boxShadow = '';
+                }, 1000);
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
